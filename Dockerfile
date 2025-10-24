@@ -9,6 +9,7 @@ RUN pip install -r requirements.txt
 COPY . .
 RUN mkdir -p data
 RUN useradd --create-home --shell /bin/bash app
+
 USER app
 EXPOSE 5000
 CMD ["python", "main.py"]
