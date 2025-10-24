@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
+
 RUN mkdir -p data
 RUN useradd --create-home --shell /bin/bash app
 
