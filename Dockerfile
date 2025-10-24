@@ -6,13 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-
 COPY . .
-
 RUN mkdir -p data
-
 RUN useradd --create-home --shell /bin/bash app
 USER app
 EXPOSE 5000
-
 CMD ["python", "main.py"]
