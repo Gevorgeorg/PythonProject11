@@ -4,11 +4,11 @@ import json
 
 def get_posts_all():
     """Загружает данные из файла и возвращает обычный list"""
-    # Получаем абсолютный путь к файлу
-    current_dir = Path(__file__).parent  # Папка где лежит utils.py
+
+    current_dir = Path(__file__).parent
     file_path = current_dir / 'data' / 'posts.json'
 
-    # Проверка существования файла (для отладки)
+
     print(f"Ищу файл по пути: {file_path}")
     print(f"Файл существует: {file_path.exists()}")
 
@@ -33,7 +33,8 @@ def get_posts_by_user(user_name):
 
 def get_comments_by_post_id(post_id):
     """возвращает комментарии определенного поста"""
-    current_dir = Path(__file__).parent  # Папка где лежит utils.py
+
+    current_dir = Path(__file__).parent
     file_path = current_dir / 'data' / 'comments.json'
     with open(file_path, 'r', encoding='utf-8') as file:
         comments = json.load(file)
@@ -53,6 +54,7 @@ def get_comments_by_post_id(post_id):
 
 def search_for_posts(query):
     """возвращает список постов по ключевому слову"""
+
     right_posts: list = []
     for post in get_posts_all():
         if query.lower() in post.get('content').lower():

@@ -13,42 +13,39 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 
-
-
 @app.route('/', methods=["GET"])
 def main_tape() -> str:
     """Выводит главную страницу со всеми постами"""
-    posts: list = get_posts_all()  # Получаем все посты из функции
-    return render_template('index.html', posts=posts)  # Передаем посты в шаблон
+
+    posts: list = get_posts_all()
+    return render_template('index.html', posts=posts)
+
 
 @app.route('/post/<int:post_id>/', methods=["GET"])
-def post_page(post_id:int) -> str:
+def post_page(post_id: int) -> str:
     """Выводит конкретный пост"""
+
     post: dict = get_post_by_pk(post_id)
     comments = get_comments_by_post_id(post_id)
     return render_template('post.html', post=post, comments=comments)
 
+
 @app.route('/search/', methods=["GET"])
 def search_page():
     """Обработка поискового запроса"""
-    search_query = request.args.get('s', '').strip()
 
+    search_query = request.args.get('s', '').strip()
 
     posts = search_for_posts(search_query)
 
     return render_template('search.html', search_query=search_query, posts=posts)
 
+
 @app.route('/users/<username>', methods=["GET"])
 def search_user(username):
-
+    """Поиск по имени"""
     posts = get_posts_by_user(username)
     return render_template('user-feed.html', posts=posts)
 
 
-
-
-
-app.run(debug=True)
-
-
-
+app.run(port=80,  debug=True)
