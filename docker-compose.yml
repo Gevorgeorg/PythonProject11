@@ -1,35 +1,65 @@
 
 services:
+  #  Основное приложение - Flask API
   api:
+    #  Сборка образа из исходного кода
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: .          #  Использовать текущую директорию как контекст сборки
+      dockerfile: Dockerfile  #  Использовать этот Dockerfile для сборки
+
+    #  Настройки сетевых портов
     ports:
-      - "80:5000"
+      - "80:5000"  #  Проброс портов: Хост:80 → Контейнер:5000
+                    # Это значит: то что идет на порт 80 сервера перенаправляется на порт 5000 в контейнере
+
+    #  Переменные окружения для приложения
     environment:
-      - FLASK_ENV=production
-      - DATABASE_URL=postgresql://flask_app:flask_app_password@pg:5432/flask_app
+      - FLASK_ENV=production        #  Режим работы Flask - продакшен
+      - DATABASE_URL=postgresql://flask_app:flask_app_password@pg:5432/flask_app  #  Строка подключения к БД
+                    # Формат: postgresql://username:password@host:port/database
+
+    #  Зависимости между сервисами
     depends_on:
-      - pg
-    restart: unless-stopped
-    networks:
-      - app-network
+      - pg  #  Этот сервис будет ждать запуска PostgreSQL перед своим стартом
 
+    # Политика перезапуска
+    restart: unless-stopped  # Автоматически перезапускать контейнер если он упал,
+                            # но не если его остановили вручную
+
+    #  Сетевые настройки
+    networks:
+      - app-network  #  Подключить этот сервис к сети app-network
+
+  #  Сервис базы данных PostgreSQL
   pg:
-    image: postgres:15-alpine
+    #  Использовать готовый образ PostgreSQL
+    image: postgres:15-alpine  #  PostgreSQL версии 15 на Alpine Linux (легковесный)
+
+    #  Переменные окружения для базы данных
     environment:
-      POSTGRES_USER: flask_app
-      POSTGRES_PASSWORD: flask_app_password
-      POSTGRES_DB: flask_app
+      POSTGRES_USER: flask_app           #  Имя пользователя базы данных
+      POSTGRES_PASSWORD: flask_app_password  #  Пароль пользователя базы данных
+      POSTGRES_DB: flask_app              #  Имя создаваемой базы данных
+
+    #  Настройки хранения данных
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+      - postgres_data:/var/lib/postgresql/data  #  Сохранять данные БД в именованном томе
+                    # Это гарантирует что данные не потеряются при перезапуске контейнера
+
+    #  Политика перезапуска
+    restart: unless-stopped  #  Автоперезапуск при падении
+
+    #  Сетевые настройки
     networks:
-      - app-network
+      - app-network  # 🔗 Подключить к той же сети что и API
 
+#  Определение томов для хранения данных
 volumes:
-  postgres_data:
+  postgres_data:  #  Создать именованный том для хранения данных PostgreSQL
+                  # Том автоматически создается и управляется Docker
 
+#  Определение сетей для связи между контейнерами
 networks:
-  app-network:
-    driver: bridge
+  app-network:    #  Создать сеть с именем app-network
+    driver: bridge  #  Использовать bridge драйвер (стандартная сеть Docker)
+                  # Это позволяет контейнерам общаться друг с другом по именам сервисов
